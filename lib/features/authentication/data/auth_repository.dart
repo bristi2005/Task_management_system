@@ -24,6 +24,19 @@ class AuthRepository {
     return User.fromJson(response.data['user']);
   }
 
+  Future<User> register(String name, String email, String password) async {
+    final response = await client.post('/auth/register', data: {
+      'name': name,
+      'email': email,
+      'password': password,
+    });
+
+    final token = response.data['token'];
+    await storage.saveToken(token);
+
+    return User.fromJson(response.data['user']);
+  }
+
   Future<void> logout() async {
     await storage.deleteToken();
   }

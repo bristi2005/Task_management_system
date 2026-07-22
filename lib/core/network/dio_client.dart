@@ -1,17 +1,25 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../storage/secure_storage.dart';
+import 'dart:io' show Platform;
 
 part 'dio_client.g.dart';
 
 @riverpod
 Dio dio(DioRef ref) {
+  // Use 127.0.0.1 for better compatibility in some local environments
+  String baseUrl = 'http://127.0.0.1:3000/api';
+  
+  if (!kIsWeb && Platform.isAndroid) {
+    baseUrl = 'http://10.0.2.2:3000/api';
+  }
+
   final dio = Dio(
     BaseOptions(
-      // 10.0.2.2 is the special alias to your host loopback interface (localhost on your development machine)
-      baseUrl: 'http://10.0.2.2:3000/api',
-      connectTimeout: const Duration(seconds: 5),
-      receiveTimeout: const Duration(seconds: 3),
+      baseUrl: baseUrl,
+      connectTimeout: const Duration(seconds: 15),
+      receiveTimeout: const Duration(seconds: 15),
     ),
   );
 
@@ -27,10 +35,7 @@ Dio dio(DioRef ref) {
       },
       onError: (DioException e, handler) {
         if (e.response?.statusCode == 401) {
-          // Handle automatic logout
           ref.read(secureStorageProvider).deleteToken();
-          // Ideally trigger a router redirect here if possible, 
-          // but usually the next navigation or a provider state change will handle it.
         }
         return handler.next(e);
       },

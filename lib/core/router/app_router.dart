@@ -7,6 +7,8 @@ import '../../features/tasks/presentation/task_list_screen.dart';
 import '../../features/tasks/presentation/task_form_screen.dart';
 import '../storage/secure_storage.dart';
 
+import '../../features/authentication/presentation/register_screen.dart';
+
 part 'app_router.g.dart';
 
 @riverpod
@@ -17,7 +19,7 @@ GoRouter appRouter(AppRouterRef ref) {
       final storage = ref.read(secureStorageProvider);
       final token = await storage.getToken();
       
-      final isLoggingIn = state.matchedLocation == '/login';
+      final isLoggingIn = state.matchedLocation == '/login' || state.matchedLocation == '/register';
       
       if (token == null) {
         return isLoggingIn ? null : '/login';
@@ -33,6 +35,10 @@ GoRouter appRouter(AppRouterRef ref) {
       GoRoute(
         path: '/login',
         builder: (context, state) => const LoginScreen(),
+      ),
+      GoRoute(
+        path: '/register',
+        builder: (context, state) => const RegisterScreen(),
       ),
       GoRoute(
         path: '/dashboard',

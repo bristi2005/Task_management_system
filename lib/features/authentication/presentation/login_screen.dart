@@ -120,6 +120,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ? const CircularProgressIndicator(color: Colors.white)
                       : const Text('Login'),
                 ),
+                const SizedBox(height: 16),
+                TextButton(
+                  onPressed: () => context.push('/register'),
+                  child: const Text('Don\'t have an account? Register'),
+                ),
               ],
             ),
           ),
